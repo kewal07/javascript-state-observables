@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSObservables</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+	<div id="main">
+		<div id="ps" class="container"><h1 id="ft-engg-assignment">API Usage and Example</h1>
+			</ul>
+			<h4 id="methods">Methods</h4>
+			<blockquote>
+			<p><strong>static create</strong><br>Takes a simple JavaScript Object and make it observable. This returns the new object as a state instance which can be used to observe property change.<em>**</em></p>
+			</blockquote>
+			<pre><code>let myState = State.create({ 
+			    range: {
+			        start: 1,
+			        end: 5 
+			    },
+			    visible: true 
+			});
+			</code></pre><blockquote>
+			<p><strong>getState</strong><br>Since <code>State.create</code> does not return the JavaScript object back as it deserialise the JavaScript object to native data-structure, getState function comes to the rescue to get the JavaScript object back. The function returns the plain old JavaScript object.</p>
+			</blockquote>
+			<pre><code>myState.getState();
+			// Output
+			{
+			    range: {
+			        start: 1,
+			        end: 5 
+			    },
+			    visible: true 
+			}
+			</code></pre><blockquote>
+			<p><strong>create</strong><br>Appends property in the existing state (mutates the original state). The is called using two parameters. The first parameter is where to append the state and the second being what property to append.</p>
+			</blockquote>
+			<pre><code>myState.create('range.type',    {
+			    absolute: true
+			});
+			</code></pre><p>If you do <code>myState.getState()</code> the following output is shown</p>
+			<pre><code>// Output
+			{
+			    range: {
+			        start: 1, 
+			        end: 5, 
+			        type: {
+			            absolute: true 
+			        }
+			    },
+			    visible: true 
+			}
+			</code></pre><p>The same function can be called with only one parameter, just by passing the new state properties. In this case it appends the property in the base.</p>
+			<pre><code>myState.create({ focus: null });
+			</code></pre><p>If you do <code>myState.getState()</code> the following output is shown</p>
+			<pre><code>// Output
+			{
+			    range: {
+			        start: 1, 
+			        end: 5, 
+			        type: {
+			            absolute: true 
+			        }
+			    },
+			    visible: true, 
+			    focus: null
+			}
+			</code></pre><p>This function returns the same state on which the method was called.</p>
+			<blockquote>
+			<p><strong>prop</strong><br>This acts as getter and setter. If the function is called by passing only one argument, it retrieve the value associated with the property</p>
+			</blockquote>
+			<pre><code>myState.prop('range.type')
+			// Output
+			{
+			    absolute: true
+			}
+			</code></pre><p>If the same function is called using two parameters, first one being the property and second one being the value, then the value is set for the property and the handlers are called(if any) which got registered using the on function</p>
+			<pre><code>myState.prop('visible`, true)
+			</code></pre><p>This returns the instance on which it was called for chaining.</p>
+			<blockquote>
+			<p><strong>on</strong><br>This function takes a single property and handler which is called when any of the properties are changed. When a single property is changed the handler is called with two parameter, what was the old value of the state property and what is the new value.</p>
+			</blockquote>
+			<pre><code>myState.on('range.start', (oldValue, newValue) =&gt; { 
+			    console.log('Value before prop change', oldValue);
+			    console.log('Value after prop change', newValue);
+			});
+
+			myState.prop('range.start', 9); 
+
+			// Output
+			Value before prop change 1 
+			Value after prop change 9
+			</code></pre><p>If a handler is registered on change of a property which has another state property as value, then the handler gets called whenever any state property connected to it gets changed</p>
+			<pre><code>myState.on('range', (oldValue, newValue) =&gt; { 
+			    console.log('Value before prop change', oldValue); 
+			    console.log('Value after prop change', newValue);
+			});
+
+			myState.prop('range.start', 10);
+
+			// Output
+			Value before prop change range {
+			    start: 9, 
+			    end: 5, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			Value after prop change range: {
+			    start: 10, 
+			    end: 5, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+
+			myState.prop('range.type.absolute', false);
+
+			//Output
+			// Output
+			Value before prop change range {
+			    start: 10, 
+			    end: 5, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			Value after prop change range: {
+			    start: 10, 
+			    end: 5, 
+			    type: {
+			        absolute: false 
+			    }
+			}
+			</code></pre><p>The <code>on</code> returns a function which is when called the listener registered gets unregistered</p>
+			<pre><code>
+			let unsub = myState.on('range.start', (oldVal, newVal) =&gt; { 
+			    console.log('Value before prop change', oldValue); 
+			    console.log('Value after prop change', newValue);
+			});
+
+			// Unsubscribe
+			unsub()
+			</code></pre><blockquote>
+			<p><strong>next</strong><br>Just like the way <code>on</code> works, it just calls the handlers at the start of next event loop (next frame call) with all updates happened in the current frame in single go. The function definition and output schema remains same as <code>on</code> </p>
+			</blockquote>
+			<pre><code>myState.next('range', (oldValue, newValue) =&gt; { 
+			    console.log('Value before prop change', oldValue); 
+			    console.log('Value after prop change', newValue);
+			});
+
+			myState.prop('range.start', 11);
+			myState.prop('range.end', 12);
+
+			// Output
+			Value before prop change range {
+			    start: 10, 
+			    end: 5, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			Value after prop change range: {
+			    start: 11, 
+			    end: 12, 
+			    type: {
+			        absolute: true
+			    }
+			}
+			</code></pre><blockquote>
+			<p><strong>lock and unlock</strong><br>This helps control the call of handler when a property is changed.</p>
+			</blockquote>
+			<pre><code>myState.on('range', (oldVal, newVal) =&gt; { 
+			    console.log('Value before prop change', oldValue); 
+			    console.log('Value after prop change', newValue);
+			 });
+
+			myState.prop('range.start', 12); 
+			// Output
+			Value before prop change {
+			    start: 11, 
+			    end: 12, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			Value after prop change {
+			    start: 12, 
+			    end: 12, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+
+			myState.prop('range.end', 13); 
+			// Output
+			Value before prop change {
+			    start: 12, 
+			    end: 12, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			Value after prop change {
+			    start: 12, 
+			    end: 13, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			</code></pre><p>Here the handler is called twice, because two times the property was changed. This is not always desirable. For updating group of same property the user might want to the handler to get executed only once. This time locking and unlocking comes in picture</p>
+			<pre><code>myState.on('range', (oldVal, newVal) =&gt; { 
+			    console.log('Value before prop change', oldValue); 
+			    console.log('Value after prop change', newValue);
+			});
+
+			myState 
+			    .lock()
+			    .prop('range.start', 13) 
+			    .prop('range.end', 14) 
+			    .unlock()
+
+			// Output 
+			Value before prop change {
+			    start: 12, 
+			    end: 13, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			Value after prop change {
+			    start: 13, 
+			    end: 14, 
+			    type: {
+			        absolute: true 
+			    }
+			}
+			</code></pre><p>Once <code>lock()</code> is called the state caches all the change that comes after this. When <code>unlock()</code> is called it applies all the changes to the state and the handler is called.</p>
+		</div>
+	</div>
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="State.html">State</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getClone">getClone</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#recursiveGet">recursiveGet</a></li><li><a href="global.html#recursiveInsert">recursiveInsert</a></li><li><a href="global.html#recursiveSet">recursiveSet</a></li></ul><ul><li><a href="usage.html">API Usage and Example</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    This document has not been generated by JSDoc.
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
