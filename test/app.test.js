@@ -5,8 +5,7 @@ import chai from 'chai';
 require('jsdom-global')()
 
 // Import js_observable library for test
-import State from '../src/App.es6';
-
+var State = require('../src/App.es6');
 // Initiallinzg chai
 chai.should()
 
@@ -39,7 +38,7 @@ var assert = chai.assert;
 describe('js_observables library test',function(){
 	
 	it('should create a State object', function(){
-		myState = State.create(data);
+		myState = State.State.create(data);
 		assert.equal(typeof(myState),'object');
 	});
 
@@ -61,18 +60,18 @@ describe('js_observables library test',function(){
 			absolute: true
 		});
 
-		var result = checkNested(myState.data);
+		var result = checkNested(myState.data,'range','type');
 
 		assert.equal(result,true);
 	});
 
 	it('should return property value from the State object', function(){
-		assert.equal(myState.prop('start'),1);
+		assert.equal(myState.prop('range.start'),1);
 	});
 
 	it('should set value to a property in the State object if present or create new property and set the value', function(){
-		a = myState.prop('range.start', 9);
-		assert.equal(a,9);
+		myState.prop('range.start', 9);
+		assert.equal(myState.prop('range.start'),9);
 	});
 
 	it('should register an handler for a property & when property is changed the handler is called', function(){

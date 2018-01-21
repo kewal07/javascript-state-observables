@@ -12,7 +12,7 @@
     "build": "NODE_ENV=development webpack && webpack",
     "dev": "webpack-dev-server --inline --hot",
     "test": "mocha",
-    "test:cover": "istanbul cover _mocha -- --compilers js:babel-core/register",
+    "test:cover": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register",
     "coverage": "babel-node ./node_modules/.bin/isparta cover mocha -- --compilers js:babel-core/register"
   },
   "keywords": [
@@ -27,8 +27,12 @@
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.2",
+    "cross-env": "5.1.3",
     "dotenv": "^4.0.0",
+    "eslint": "4.16.0",
     "isparta": "^4.0.0",
+    "istanbul": "1.0.0-alpha.2",
+    "jsdoc": "3.5.5",
     "jsdom": "^11.5.1",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.0.0",

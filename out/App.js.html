@@ -1,4 +1,32 @@
-"use strict"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: App.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: App.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict"
 
 /**
  * Represents the State object.
@@ -65,7 +93,7 @@ function recursiveInsert(object, key_vals, value) {
 		object[key_vals[0]]= value;
 		return;
 	}
-	if (!(key_vals[0] in object && object.hasOwnProperty(key_vals[0]) && typeof object[key_vals[0]] == "object"))
+	if (!(key_vals[0] in object &amp;&amp; object.hasOwnProperty(key_vals[0]) &amp;&amp; typeof object[key_vals[0]] == "object"))
 	{
     	object[key_vals[0]] = {};
     }
@@ -82,7 +110,7 @@ function recursiveGet(object, key_vals) {
 	if (key_vals.length == 1) {
 		return getValues(object[key_vals[0]]);
 	}
-	if (key_vals[0] in object && object.hasOwnProperty(key_vals[0]))
+	if (key_vals[0] in object &amp;&amp; object.hasOwnProperty(key_vals[0]))
 	{
     	return recursiveGet(object[key_vals[0]],key_vals.slice(1));
     }
@@ -102,7 +130,7 @@ function recursiveSet(object, key_vals, value) {
 		object[key_vals[0]]= value;
 		return;
 	}
-	if (!(key_vals[0] in object && object.hasOwnProperty(key_vals[0]) && typeof object[key_vals[0]] == "object"))
+	if (!(key_vals[0] in object &amp;&amp; object.hasOwnProperty(key_vals[0]) &amp;&amp; typeof object[key_vals[0]] == "object"))
 	{
     	object[key_vals[0]] = {};
     }
@@ -173,7 +201,7 @@ State.prototype = {
       var l_key;
     	if (this.locked) {
     		for (l_key in this.listeners) {
-    			if (key.startsWith(l_key) && !(l_key in this.changed_prop)) {
+    			if (key.startsWith(l_key) &amp;&amp; !(l_key in this.changed_prop)) {
     				this.changed_prop[l_key] = recursiveGet(this.data, l_key.split("."));
     			}
     		}
@@ -250,13 +278,13 @@ State.prototype = {
   		for (l_key in this.changed_prop) {
   			newValue = recursiveGet(this.data, l_key.split("."));
   			oldValue = this.changed_prop[l_key];
-  			if(!this.listeners[l_key] || this.listeners[l_key].length < 1) return;
+  			if(!this.listeners[l_key] || this.listeners[l_key].length &lt; 1) return;
     			this.listeners[l_key].forEach((listenerAction) => listenerAction(oldValue, newValue));
   		}
   		for (l_key in this.lock_track_change) {
   			if(this.lock_track_change[l_key]['changed']) {
   				newValue = recursiveGet(this.data, l_key.split("."))
-      			if(!this.next_listeners[l_key] || this.next_listeners[l_key].length < 1) return;
+      			if(!this.next_listeners[l_key] || this.next_listeners[l_key].length &lt; 1) return;
         			this.next_listeners[l_key].forEach((listenerAction) => listenerAction(this.lock_track_change[l_key]['oldValue'], newValue));
   			}
   		}
@@ -266,14 +294,14 @@ State.prototype = {
       	for(l_key in oldValue) {
       		if (key.startsWith(l_key)){
       			newValue = recursiveGet(this.data, l_key.split("."));
-      			if(!this.listeners[l_key] || this.listeners[l_key].length < 1) return;
+      			if(!this.listeners[l_key] || this.listeners[l_key].length &lt; 1) return;
         			this.listeners[l_key].forEach((listenerAction) => listenerAction(oldValue[l_key], newValue));
       		}
       	}
       	for(l_key in this.next_listeners) {
-      		if (this.track_change[l_key] && this.track_change[l_key]['changed']) {
+      		if (this.track_change[l_key] &amp;&amp; this.track_change[l_key]['changed']) {
       			newValue = recursiveGet(this.data, l_key.split("."))
-      			if(!this.next_listeners[l_key] || this.next_listeners[l_key].length < 1) return;
+      			if(!this.next_listeners[l_key] || this.next_listeners[l_key].length &lt; 1) return;
         			this.next_listeners[l_key].forEach((listenerAction) => listenerAction(this.track_change[l_key]['oldValue'], newValue));
         			delete this.track_change[l_key];
       		}
@@ -306,3 +334,26 @@ State.prototype = {
 module.exports = {
   State:State
 };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="State.html">State</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getClone">getClone</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#recursiveGet">recursiveGet</a></li><li><a href="global.html#recursiveInsert">recursiveInsert</a></li><li><a href="global.html#recursiveSet">recursiveSet</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 21 2018 05:42:48 GMT+0530 (IST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
