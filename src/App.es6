@@ -274,7 +274,7 @@ State.prototype = {
       		if (this.track_change[l_key] && this.track_change[l_key]['changed']) {
       			newValue = recursiveGet(this.data, l_key.split("."))
       			if(!this.next_listeners[l_key] || this.next_listeners[l_key].length < 1) return;
-        			this.next_listeners[l_key].forEach((listenerAction) => listenerAction(this.track_change[l_key]['oldValue'], newValue));
+        		  this.next_listeners[l_key].forEach((listenerAction) => listenerAction(this.track_change[l_key]['oldValue'], newValue));
         			delete this.track_change[l_key];
       		}
       	}
